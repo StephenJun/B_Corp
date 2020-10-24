@@ -17,7 +17,7 @@ public class MoveUp : MonoBehaviour
     {
         if (this.move)
         {
-            this.transform.Translate(Vector3.up * 0.1f);
+            this.transform.Translate(Vector3.up * 0.2f);
         }
     }
 

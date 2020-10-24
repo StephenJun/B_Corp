@@ -251,7 +251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1da94e93dad2424dabf4109b6b2b2fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  duration: 20
+  duration: 3
   labelPrefab: {fileID: 5392048540165111403, guid: 2c6a6f17ed3d1fc49ab646c17b9b0417,
     type: 3}
 --- !u!114 &502372268

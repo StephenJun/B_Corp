@@ -5,24 +5,27 @@ using UnityEngine.UI;
 
 public class LabelPool
 {
+    private int size;
     private Text labelPrefab;
     private Transform parent;
     private List<Text> pool;
 
     public LabelPool(Text labelPrefab, Transform parent)
     {
+        this.size = 1;
         this.labelPrefab = labelPrefab;
         this.parent = parent;
-        this.pool = new List<Text>(5);
-        this.AddLabels(5);
+        this.pool = new List<Text>(this.size);
+        this.AddLabels(this.size);
     }
 
     public LabelPool(Text labelPrefab, Transform parent, int size)
     {
+        this.size = size;
         this.labelPrefab = labelPrefab;
         this.parent = parent;
-        this.pool = new List<Text>(size);
-        this.AddLabels(size);
+        this.pool = new List<Text>(this.size);
+        this.AddLabels(this.size);
     }
 
     public Text GetLabel(string msg, Color color)
@@ -41,6 +44,11 @@ public class LabelPool
 
     public void ReturnLabel(Text label)
     {
+        if (this.pool.Count >= this.size)
+        {
+            Object.Destroy(label.gameObject);
+            return;
+        }
         label.enabled = false;
         label.text = "";
         label.color = Color.white;
@@ -69,7 +77,7 @@ public class Toast : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        this.labelPool = new LabelPool(this.labelPrefab, this.transform);
+        this.labelPool = new LabelPool(this.labelPrefab, this.transform, 5);
     }
 
     // Update is called once per frame
@@ -99,9 +107,8 @@ public class Toast : MonoBehaviour
     {
         Text label = this.labelPool.GetLabel(msg, color);
         label.GetComponent<MoveUp>().SetMove(true);
-        print(label.GetComponent<MoveUp>().GetMove());
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(duration);
 
         label.GetComponent<MoveUp>().SetMove(false);
         this.labelPool.ReturnLabel(label);
