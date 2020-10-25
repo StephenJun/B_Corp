@@ -40,8 +40,8 @@ public class LabelPool
         Text text = label.GetComponent<Text>();
         text.text = msg;
         text.color = color;
-        label.GetComponent<MoveUp>().SetMove(true);
         label.SetActive(true);
+        label.GetComponent<MoveUp>().SetMove(true);
         this.pool.RemoveAt(0);
         return label;
     }

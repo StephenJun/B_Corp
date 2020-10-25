@@ -13,7 +13,10 @@ public class ToastTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            ShowSomething();
+        }
     }
 
     public void ShowSomething()
