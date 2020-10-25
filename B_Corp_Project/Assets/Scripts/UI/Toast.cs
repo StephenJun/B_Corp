@@ -1,58 +1,64 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LabelPool
 {
     private int size;
-    private Text labelPrefab;
+    private GameObject labelPrefab;
     private Transform parent;
-    private List<Text> pool;
+    private List<GameObject> pool;
 
-    public LabelPool(Text labelPrefab, Transform parent)
+    public LabelPool()
     {
         this.size = 1;
-        this.labelPrefab = labelPrefab;
-        this.parent = parent;
-        this.pool = new List<Text>(this.size);
+        this.labelPrefab = Resources.Load("Label") as GameObject;
+        this.parent = GameObject.Find("Canvas").transform;
+        this.pool = new List<GameObject>(this.size);
         this.AddLabels(this.size);
     }
 
-    public LabelPool(Text labelPrefab, Transform parent, int size)
+    public LabelPool(int size)
     {
         this.size = size;
-        this.labelPrefab = labelPrefab;
-        this.parent = parent;
-        this.pool = new List<Text>(this.size);
+        this.labelPrefab = Resources.Load("Label") as GameObject;
+        this.parent = GameObject.Find("Canvas").transform;
+        this.pool = new List<GameObject>(this.size);
         this.AddLabels(this.size);
     }
 
-    public Text GetLabel(string msg, Color color)
+    public GameObject GetLabel(string msg, Color color)
     {
         if (this.pool.Count <= 1)
         {
             this.AddLabels(1);
         }
-        Text label = this.pool[0];
-        label.text = msg;
-        label.color = color;
-        label.enabled = true;
+        GameObject label = this.pool[0];
+        Text text = label.GetComponent<Text>();
+        text.text = msg;
+        text.color = color;
+        label.GetComponent<MoveUp>().SetMove(true);
+        label.SetActive(true);
         this.pool.RemoveAt(0);
         return label;
     }
 
-    public void ReturnLabel(Text label)
+    public void ReturnLabel(GameObject label)
     {
         if (this.pool.Count >= this.size)
         {
-            Object.Destroy(label.gameObject);
+            UnityEngine.Object.Destroy(label.gameObject);
             return;
         }
-        label.enabled = false;
-        label.text = "";
-        label.color = Color.white;
-        label.transform.position = this.parent.position;
+        label.SetActive(false);
+        label.GetComponent<MoveUp>().SetMove(false);
+        Text text = label.GetComponent<Text>();
+        text.text = "";
+        text.color = Color.white;
+        text.transform.position = this.parent.position;
         this.pool.Add(label);
     }
 
@@ -60,57 +66,43 @@ public class LabelPool
     {
         for (int i = 0; i < num; i++)
         {
-            Text label = Object.Instantiate(this.labelPrefab, this.parent.position, Quaternion.identity);
+            GameObject label = UnityEngine.Object.Instantiate(this.labelPrefab, this.parent.position, Quaternion.identity);
             label.transform.SetParent(this.parent);
-            label.enabled = false;
-            this.pool.Add(label);
+            this.ReturnLabel(label);
         }
     }
 }
 
-public class Toast : MonoBehaviour
+public class Toast
 {
-    public float duration;
-    public Text labelPrefab;
-    private LabelPool labelPool;
+    private static MonoBehaviour dummyInstance = MonoSingleton<MonoBehaviour>.Instance;
+    public static float duration = 3;
+    private static LabelPool labelPool = new LabelPool(5);
 
-    // Start is called before the first frame update
-    void Start()
+    public static void Show(string msg)
     {
-        this.labelPool = new LabelPool(this.labelPrefab, this.transform, 5);
+        Toast.dummyInstance.StartCoroutine(Toast.CreateLabel(msg, Color.white));
     }
 
-    // Update is called once per frame
-    void Update()
+    public static void Show(string msg, Color color)
     {
+        Toast.dummyInstance.StartCoroutine(Toast.CreateLabel(msg, color));
     }
 
-    public void Show(string msg)
+    public static void Warning(string msg) {
+        Toast.Show(msg, Color.yellow);
+    }
+
+    public static void Error(string msg) {
+        Toast.Show(msg, Color.red);
+    }
+
+    private static IEnumerator CreateLabel(string msg, Color color)
     {
-        this.StartCoroutine(this.CreateLabel(msg, Color.white));
-    }
-
-    public void Show(string msg, Color color)
-    {
-        this.StartCoroutine(this.CreateLabel(msg, color));
-    }
-
-    public void Warning(string msg) {
-        this.Show(msg, Color.yellow);
-    }
-
-    public void Error(string msg) {
-        this.Show(msg, Color.red);
-    }
-
-    private IEnumerator CreateLabel(string msg, Color color)
-    {
-        Text label = this.labelPool.GetLabel(msg, color);
-        label.GetComponent<MoveUp>().SetMove(true);
+        GameObject label = Toast.labelPool.GetLabel(msg, color);
 
         yield return new WaitForSeconds(duration);
 
-        label.GetComponent<MoveUp>().SetMove(false);
-        this.labelPool.ReturnLabel(label);
+        Toast.labelPool.ReturnLabel(label);
     }
 }

@@ -248,12 +248,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 502372265}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1da94e93dad2424dabf4109b6b2b2fc, type: 3}
+  m_Script: {fileID: 11500000, guid: 12148e25f1965d6488020453e831631d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  duration: 3
-  labelPrefab: {fileID: 5392048540165111403, guid: 2c6a6f17ed3d1fc49ab646c17b9b0417,
-    type: 3}
 --- !u!114 &502372268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,14 +295,14 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 502372267}
-        m_MethodName: Show
-        m_Mode: 5
+        m_MethodName: ShowSomething
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: The function "Show" is being called!
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &502372269
